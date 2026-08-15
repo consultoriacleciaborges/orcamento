@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Briefing de Orçamento — Consultoria Acadêmica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0A1A2F;
+  --panel:#0E2440;
+  --panel-2:#123055;
+  --orange:#FF8A3D;
+  --orange-2:#FFAA6B;
+  --orange-dim:rgba(255,138,61,.13);
+  --chalk:#E9EFF7;
+  --dim:#8FA3BC;
+  --alert:#FF5C4D;
+  --ok:#5B9BFF;
+  --line:rgba(233,239,247,.13);
+  --line-soft:rgba(233,239,247,.06);
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:'IBM Plex Sans',system-ui,-apple-system,Segoe UI,sans-serif;
+  --cond:'IBM Plex Sans Condensed','IBM Plex Sans',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+html{background:var(--bg)}
+body{
+  background:var(--bg);
+  color:var(--chalk);font-family:var(--sans);font-size:15px;line-height:1.55;
+  padding-bottom:60px;-webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:780px;margin:0 auto;padding:0 20px}
+
+header.sheet{border-bottom:1px solid var(--line);padding:44px 0 30px;margin-bottom:8px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--orange);margin:0 0 14px}
+h1{font-family:var(--cond);font-weight:700;font-size:clamp(30px,6.2vw,46px);line-height:1.02;margin:0 0 16px;letter-spacing:-.01em}
+h1 em{font-style:normal;color:var(--orange)}
+.lede{color:var(--dim);max-width:58ch;margin:0 0 26px}
+
+/* tabela de investimento */
+.precos{border:1px solid var(--line);border-radius:8px;background:var(--panel);overflow:hidden}
+.precos h4{font-family:var(--sans);font-size:15px;font-weight:700;color:var(--chalk);
+  margin:0;padding:16px 18px 4px;display:flex;align-items:center;gap:9px}
+.precos h4::before{content:"";width:15px;height:12px;border:1.5px solid var(--orange);border-radius:2px;display:inline-block}
+.precos .sub{margin:0;padding:0 18px 14px;color:var(--dim);font-size:12.5px}
+.precos ul{list-style:none;margin:0;padding:0 12px 12px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:600px){.precos ul{grid-template-columns:1fr}}
+.precos li{background:rgba(255,255,255,.03);border:1px solid var(--line-soft);border-radius:6px;
+  padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.precos li .n{font-size:14px;color:var(--chalk);line-height:1.3}
+.precos li .n small{display:block;color:var(--dim);font-size:11.5px;margin-top:3px}
+.precos li .p{font-family:var(--sans);font-weight:600;font-size:14.5px;color:var(--orange);white-space:nowrap}
+.precos .faixa{margin:0 12px 10px;border:1px solid rgba(255,138,61,.35);background:var(--orange-dim);
+  border-radius:6px;padding:11px 14px;font-size:13px;color:var(--dim);line-height:1.5}
+.precos .faixa b{color:var(--orange)}
+.precos .faixa:last-child{margin-bottom:14px}
+
+section.bloco{border-bottom:1px solid var(--line);padding:34px 0 30px}
+.bloco-head{display:flex;gap:14px;align-items:baseline;margin-bottom:6px}
+.num{font-family:var(--mono);font-size:11px;color:var(--orange);border:1px solid rgba(255,138,61,.5);
+  background:var(--orange-dim);border-radius:2px;padding:2px 6px;flex:0 0 auto;letter-spacing:.06em}
+h2{font-family:var(--cond);font-weight:700;font-size:23px;margin:0}
+.bloco-sub{color:var(--dim);font-size:13.5px;margin:0 0 24px 40px}
+@media(max-width:520px){.bloco-sub{margin-left:0}}
+
+.field{margin-bottom:22px}
+.field:last-child{margin-bottom:0}
+label.q{display:block;font-family:var(--mono);font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--chalk);margin-bottom:9px}
+label.q .req{color:var(--orange)}
+.hint{display:block;font-family:var(--sans);font-size:12.5px;letter-spacing:0;text-transform:none;color:var(--dim);margin-top:4px;font-weight:400}
+input[type=text],input[type=email],input[type=number],input[type=date],select,textarea{
+  width:100%;background:#07152A;border:1px solid var(--line);border-radius:4px;color:var(--chalk);
+  font-family:var(--sans);font-size:15px;padding:11px 12px;transition:border-color .15s,background .15s}
+textarea{min-height:86px;resize:vertical}
+select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--dim) 50%),linear-gradient(135deg,var(--dim) 50%,transparent 50%);
+  background-position:calc(100% - 19px) 20px,calc(100% - 14px) 20px;background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:38px}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--orange);outline-offset:1px;border-color:transparent;background:#0A1D36}
+input.erro{border-color:var(--alert)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:560px){.grid2{grid-template-columns:1fr}}
+
+.opts{display:grid;gap:8px}
+.opts.two{grid-template-columns:1fr 1fr}
+.opts.three{grid-template-columns:repeat(3,1fr)}
+@media(max-width:560px){.opts.two,.opts.three{grid-template-columns:1fr}}
+.opt{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:5px;padding:11px 13px;
+  cursor:pointer;background:var(--panel);transition:border-color .15s,background .15s}
+.opt:hover{border-color:rgba(255,138,61,.5);background:var(--panel-2)}
+.opt input{margin:3px 0 0;accent-color:var(--orange);flex:0 0 auto}
+.opt span{font-size:14px;line-height:1.4}
+.opt span small{display:block;color:var(--dim);font-size:12px;margin-top:2px}
+.opt:has(input:checked){border-color:var(--orange);background:var(--orange-dim)}
+.opt input:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+
+.tabref{display:flex;flex-wrap:wrap;gap:10px 22px;border:1px solid rgba(255,138,61,.35);border-left:2px solid var(--orange);
+  background:var(--orange-dim);border-radius:0 5px 5px 0;padding:12px 14px;margin-top:12px}
+.tabref div{min-width:120px}
+.tabref .k{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--dim)}
+.tabref .v{font-family:var(--mono);font-size:13.5px;color:var(--orange-2)}
+
+.card{border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:24px 20px;margin:24px 0 14px}
+.card h3{font-family:var(--cond);font-size:19px;margin:0 0 16px;font-weight:700}
+.card p.intro{color:var(--dim);font-size:13.5px;margin:-8px 0 16px}
+.nota{border-left:2px solid var(--orange);background:var(--orange-dim);padding:12px 14px;font-size:13.5px;margin-top:14px;border-radius:0 5px 5px 0;color:var(--dim)}
+.nota b{color:var(--chalk)}
+.nota.ok{border-left-color:var(--ok);background:rgba(91,155,255,.1)}
+.alerta{border-left:2px solid var(--alert);background:rgba(255,92,77,.11);padding:12px 14px;font-size:13.5px;margin-top:14px;border-radius:0 5px 5px 0}
+
+.btn{font-family:var(--mono);font-size:12px;letter-spacing:.09em;text-transform:uppercase;background:transparent;color:var(--chalk);
+  border:1px solid var(--line);border-radius:4px;padding:11px 16px;cursor:pointer;transition:all .15s}
+.btn:hover{border-color:var(--orange);color:var(--orange)}
+.btn:disabled{opacity:.5;cursor:progress}
+.btn.solid{background:var(--orange);color:#0A1A2F;border-color:var(--orange);font-weight:700}
+.btn.solid:hover{background:var(--orange-2);color:#0A1A2F}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+
+.saida{width:100%;background:#07152A;border:1px solid var(--line);border-radius:4px;color:var(--chalk);
+  font-family:var(--mono);font-size:12px;line-height:1.65;padding:14px;min-height:240px;white-space:pre;overflow:auto}
+footer.fim{padding:28px 0 10px;color:var(--dim);font-size:13px;line-height:1.7;border-top:1px solid var(--line);margin-top:10px}
+footer.fim b{color:var(--orange)}
+.hidden{display:none !important}
+@media(prefers-reduced-motion:reduce){*{transition:none !important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="sheet">
+  <p class="eyebrow">Briefing de orçamento · Consultoria &amp; Mentoria Acadêmica</p>
+  <h1>Responda para eu montar o seu <em>orçamento</em>.</h1>
+  <p class="lede">São sete blocos rápidos sobre a sua pesquisa, o documento que o seu programa exige e o prazo que você tem. Com isso eu chego ao valor exato do acompanhamento e retorno em até 1 dia útil.</p>
+
+  <div class="precos">
+    <h4>Tabela de Investimento</h4>
+    <p class="sub">Preços base sujeitos a alterações conforme complexidade, prazo e especificações do projeto.</p>
+    <ul id="listaPrecos"></ul>
+    <div class="faixa"><b>Mentoria ao vivo:</b> R$ 388,00 por hora · <b>10% OFF</b> para pagamento via PIX · Até <b>12x</b> no cartão</div>
+    <div class="faixa"><b>Trabalho parcial (capítulos específicos):</b> valor sob consulta — a complexidade é analisada e o orçamento sai personalizado.</div>
+    <div class="faixa"><b>O valor final é adaptado às suas respostas.</b> Os números acima são o ponto de partida: o orçamento sobe ou desce conforme o estágio da sua pesquisa, a complexidade do método, o volume de busca bibliográfica, o número de páginas e o prazo. Por isso o formulário não mostra um total — o cálculo é feito caso a caso.</div>
+  </div>
+</header>
+
+<!-- ============ BLOCO 01 ============ -->
+<section class="bloco">
+  <div class="bloco-head"><span class="num">01</span><h2>Quem é você e onde estuda</h2></div>
+  <p class="bloco-sub">Define a norma aplicável e o calendário do seu programa.</p>
+
+  <div class="grid2">
+    <div class="field"><label class="q" for="nome">Nome completo <span class="req">*</span></label><input type="text" id="nome" placeholder="Como consta na matrícula"></div>
+    <div class="field"><label class="q" for="email">E-mail <span class="req">*</span></label><input type="email" id="email" placeholder="voce@exemplo.com"></div>
+    <div class="field"><label class="q" for="zap">WhatsApp</label><input type="text" id="zap" placeholder="(00) 00000-0000"></div>
+    <div class="field"><label class="q" for="uni">Universidade e programa <span class="req">*</span></label><input type="text" id="uni" placeholder="Ex.: UFPE — PPG em Ciência da Computação"></div>
+  </div>
+
+  <div class="field"><label class="q" for="linha">Área de concentração e linha de pesquisa</label><input type="text" id="linha" placeholder="Como aparece no edital ou no site do programa"></div>
+
+  <div class="field">
+    <label class="q">Nível <span class="req">*</span></label>
+    <div class="opts three">
+      <label class="opt"><input type="radio" name="nivel" value="Graduação"><span>Graduação</span></label>
+      <label class="opt"><input type="radio" name="nivel" value="Especialização"><span>Especialização</span></label>
+      <label class="opt"><input type="radio" name="nivel" value="MBA"><span>MBA</span></label>
+      <label class="opt"><input type="radio" name="nivel" value="Mestrado"><span>Mestrado</span></label>
+      <label class="opt"><input type="radio" name="nivel" value="Doutorado" checked><span>Doutorado</span></label>
+      <label class="opt"><input type="radio" name="nivel" value="Doutorado direto"><span>Doutorado direto</span></label>
+      <label class="opt"><input type="radio" name="nivel" value="Pós-doutorado"><span>Pós-doutorado</span></label>
+      <label class="opt"><input type="radio" name="nivel" value="Outro" id="nivelOutro"><span>Outro</span></label>
+    </div>
+    <div class="field hidden" id="campoNivelOutro" style="margin-top:12px">
+      <label class="q" for="nivelOutroTxt">Especifique o nível <span class="req">*</span></label>
+      <input type="text" id="nivelOutroTxt" placeholder="Ex.: residência, aperfeiçoamento, curso técnico…">
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="field"><label class="q" for="orientador">Orientador(a)</label><input type="text" id="orientador" placeholder="Nome e titulação"></div>
+    <div class="field">
+      <label class="q" for="cienciaOri">O orientador sabe do apoio externo?</label>
+      <select id="cienciaOri">
+        <option>Sim, e concorda</option>
+        <option>Sim, mas ainda não conversamos a fundo</option>
+        <option>Ainda não comentei</option>
+        <option>Estou sem orientador definido</option>
+      </select>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BLOCO 02 ============ -->
+<section class="bloco">
+  <div class="bloco-head"><span class="num">02</span><h2>O documento que o programa exige</h2></div>
+  <p class="bloco-sub">Marcar só parte das seções reduz o escopo — e o orçamento acompanha.</p>
+
+  <div class="field">
+    <label class="q" for="tipo">Tipo de entrega <span class="req">*</span></label>
+    <select id="tipo"></select>
+    <div class="tabref" id="tabref">
+      <div><span class="k">Referência</span><span class="v" id="trNome">—</span></div>
+      <div><span class="k">Páginas sem acréscimo</span><span class="v" id="trPag">—</span></div>
+      <div><span class="k">Prazo de entrega</span><span class="v" id="trDias">—</span></div>
+    </div>
+    <p class="hint" id="descTipo" style="margin-top:10px"></p>
+  </div>
+
+  <div class="field">
+    <label class="q">Seções exigidas pelo modelo do programa <span class="req">*</span><span class="hint">Desmarque o que já está pronto ou o que não será trabalhado em conjunto.</span></label>
+    <div class="opts two" id="secoes">
+      <label class="opt"><input type="checkbox" class="sec" data-w="0.10" value="Introdução e contextualização" checked><span>Introdução e contextualização</span></label>
+      <label class="opt"><input type="checkbox" class="sec" data-w="0.06" value="Motivação e justificativa" checked><span>Motivação e justificativa</span></label>
+      <label class="opt"><input type="checkbox" class="sec" data-w="0.05" value="Perguntas de pesquisa" checked><span>Perguntas de pesquisa</span></label>
+      <label class="opt"><input type="checkbox" class="sec" data-w="0.05" value="Objetivos geral e específicos" checked><span>Objetivos (geral e específicos)</span></label>
+      <label class="opt"><input type="checkbox" class="sec" data-w="0.16" value="Fundamentação teórica / Revisão de literatura" checked><span>Fundamentação teórica / Revisão de literatura</span></label>
+      <label class="opt"><input type="checkbox" class="sec" data-w="0.14" value="Trabalhos relacionados" checked><span>Trabalhos relacionados / estado da arte</span></label>
+      <label class="opt"><input type="checkbox" class="sec" data-w="0.20" value="Proposta e método" checked><span>Proposta e método</span></label>
+      <label class="opt"><input type="checkbox" class="sec" data-w="0.08" value="Atividades realizadas e contribuições" checked><span>Atividades realizadas e contribuições</span></label>
+      <label class="opt"><input type="checkbox" class="sec" data-w="0.05" value="Atividades previstas e futuras" checked><span>Atividades previstas e futuras</span></label>
+      <label class="opt"><input type="checkbox" class="sec" data-w="0.03" value="Cronograma" checked><span>Cronograma de atividades</span></label>
+      <label class="opt"><input type="checkbox" class="sec" data-w="0.05" value="Referências normalizadas" checked><span>Referências normalizadas</span></label>
+      <label class="opt"><input type="checkbox" class="sec" data-w="0.03" value="Pré-textuais e formatação" checked><span>Pré-textuais (resumo, abstract, listas, sumário)</span></label>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="field"><label class="q" for="paginas">Número de páginas exigido <span class="req">*</span><span class="hint" id="hintPag">Se o modelo não define, informe a média das aprovadas no seu programa.</span></label><input type="number" id="paginas" value="60" min="5" max="500"></div>
+    <div class="field">
+      <label class="q" for="norma">Norma de formatação</label>
+      <select id="norma">
+        <option>ABNT + manual de normalização da universidade</option>
+        <option>ABNT padrão</option>
+        <option>APA</option><option>IEEE</option><option>ACM</option><option>Vancouver</option>
+        <option>Template próprio do programa</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="field">
+      <label class="q" for="idioma">Idioma do documento</label>
+      <select id="idioma">
+        <option value="pt">Português (com abstract em inglês)</option>
+        <option value="bi">Português e inglês (versões paralelas)</option>
+        <option value="es">Espanhol</option>
+        <option value="en">Inglês integral</option>
+      </select>
+    </div>
+    <div class="field">
+      <label class="q" for="editor">Editor de texto</label>
+      <select id="editor"><option value="word">Word / Google Docs</option><option value="latex">LaTeX (Overleaf)</option></select>
+    </div>
+  </div>
+
+  <div class="field"><label class="q" for="modelo">Link do modelo ou manual do programa<span class="hint">Se preferir, envie o arquivo por WhatsApp depois.</span></label><input type="text" id="modelo" placeholder="https://"></div>
+</section>
+
+<!-- ============ BLOCO 03 ============ -->
+<section class="bloco">
+  <div class="bloco-head"><span class="num">03</span><h2>Onde a pesquisa está hoje</h2></div>
+  <p class="bloco-sub">O que mais pesa no orçamento. Construir um recorte do zero exige mais horas do que organizar um recorte que já existe.</p>
+
+  <div class="field">
+    <label class="q">Estágio da definição do tema <span class="req">*</span></label>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="estagio" value="nada" data-m="1.30"><span>Ainda não tenho tema<small>Vamos construir o recorte juntos, do interesse à pergunta</small></span></label>
+      <label class="opt"><input type="radio" name="estagio" value="area" data-m="1.18"><span>Tenho a área, não o tema<small>Sei o campo, falta delimitar o objeto</small></span></label>
+      <label class="opt"><input type="radio" name="estagio" value="tema" data-m="1.08" checked><span>Tema definido<small>Falta transformar em pergunta pesquisável</small></span></label>
+      <label class="opt"><input type="radio" name="estagio" value="pergunta" data-m="1.00"><span>Pergunta de pesquisa formulada<small>Objetivos ainda em rascunho</small></span></label>
+      <label class="opt"><input type="radio" name="estagio" value="completo" data-m="0.92"><span>Pergunta, objetivos e hipóteses definidos<small>Já discutidos com o orientador</small></span></label>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="field">
+      <label class="q" for="escrito">Quanto já está escrito</label>
+      <select id="escrito">
+        <option value="1.08" data-lbl="nada escrito">Nada ainda</option>
+        <option value="1.04" data-lbl="até 5 páginas">Até 5 páginas</option>
+        <option value="1.00" data-lbl="5 a 15 páginas" selected>5 a 15 páginas</option>
+        <option value="0.96" data-lbl="15 a 30 páginas">15 a 30 páginas</option>
+        <option value="0.92" data-lbl="mais de 30 páginas">Mais de 30 páginas</option>
+      </select>
+    </div>
+    <div class="field">
+      <label class="q" for="refs">Referências já lidas e fichadas</label>
+      <select id="refs">
+        <option value="1.06" data-lbl="0 a 10 referências">De 0 a 10</option>
+        <option value="1.03" data-lbl="11 a 30 referências" selected>De 11 a 30</option>
+        <option value="1.00" data-lbl="31 a 60 referências">De 31 a 60</option>
+        <option value="0.97" data-lbl="mais de 60 referências">Mais de 60</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="field">
+      <label class="q" for="dados">Dados, campo ou ambiente de experimento</label>
+      <select id="dados">
+        <option value="0.98" data-lbl="dados já coletados">Já coletados / base pronta</option>
+        <option value="1.00" data-lbl="acesso garantido" selected>Acesso garantido, coleta a fazer</option>
+        <option value="1.05" data-lbl="fonte de dados a definir">Ainda preciso definir a fonte</option>
+        <option value="1.00" data-lbl="não se aplica">Não se aplica (pesquisa teórica)</option>
+      </select>
+    </div>
+    <div class="field">
+      <label class="q" for="etica">Comitê de ética (CEP/CONEP)</label>
+      <select id="etica">
+        <option value="1.00" data-lbl="não se aplica" selected>Não se aplica</option>
+        <option value="1.00" data-lbl="já aprovado">Já aprovado</option>
+        <option value="1.04" data-lbl="submissão pendente">Necessário, ainda não submetido</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="field">
+    <label class="q" for="gestor">Gestor de referências em uso</label>
+    <select id="gestor"><option>Nenhum</option><option>Zotero</option><option>Mendeley</option><option>EndNote</option><option>JabRef / BibTeX</option></select>
+  </div>
+</section>
+
+<!-- ============ BLOCO 04 ============ -->
+<section class="bloco">
+  <div class="bloco-head"><span class="num">04</span><h2>Complexidade metodológica</h2></div>
+  <p class="bloco-sub">Um ensaio teórico e um experimento com protótipo não exigem o mesmo acompanhamento.</p>
+
+  <div class="field">
+    <label class="q">Natureza da pesquisa <span class="req">*</span></label>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="metodo" value="Teórico-conceitual" data-m="1.00" data-d="1.00"><span>Teórico-conceitual<small>Ensaio, análise crítica, construção de framework</small></span></label>
+      <label class="opt"><input type="radio" name="metodo" value="Qualitativa" data-m="1.10" data-d="1.10"><span>Qualitativa<small>Entrevistas, etnografia, análise de conteúdo ou discurso</small></span></label>
+      <label class="opt"><input type="radio" name="metodo" value="Quantitativa descritiva" data-m="1.12" data-d="1.10"><span>Quantitativa descritiva<small>Survey, estatística descritiva, indicadores</small></span></label>
+      <label class="opt"><input type="radio" name="metodo" value="Quantitativa inferencial ou modelagem" data-m="1.22" data-d="1.20"><span>Quantitativa inferencial / modelagem<small>Testes de hipótese, regressão, séries temporais, ML</small></span></label>
+      <label class="opt"><input type="radio" name="metodo" value="Revisão sistemática como método" data-m="1.22" data-d="1.30"><span>Revisão sistemática como método principal<small>Protocolo PRISMA, triagem por pares, extração</small></span></label>
+      <label class="opt"><input type="radio" name="metodo" value="Experimental / desenvolvimento de artefato (DSR)" data-m="1.30" data-d="1.35" checked><span>Experimental ou desenvolvimento de artefato<small>Design Science Research, protótipo, benchmark</small></span></label>
+      <label class="opt"><input type="radio" name="metodo" value="Método misto" data-m="1.35" data-d="1.35"><span>Método misto<small>Combinação qualitativa e quantitativa em fases</small></span></label>
+    </div>
+  </div>
+
+  <div class="field">
+    <label class="q">Análises previstas<span class="hint">Marque tudo que o documento precisa descrever ou justificar.</span></label>
+    <div class="opts two">
+      <label class="opt"><input type="checkbox" class="analise" value="Estatística inferencial"><span>Estatística inferencial</span></label>
+      <label class="opt"><input type="checkbox" class="analise" value="Machine learning"><span>Machine learning / IA</span></label>
+      <label class="opt"><input type="checkbox" class="analise" value="Simulação ou benchmark" checked><span>Simulação ou benchmark</span></label>
+      <label class="opt"><input type="checkbox" class="analise" value="Modelagem matemática"><span>Modelagem matemática</span></label>
+      <label class="opt"><input type="checkbox" class="analise" value="Análise de conteúdo ou discurso"><span>Análise de conteúdo / discurso</span></label>
+      <label class="opt"><input type="checkbox" class="analise" value="Estudo de caso"><span>Estudo de caso</span></label>
+      <label class="opt"><input type="checkbox" class="analise" value="Survey"><span>Survey / questionário validado</span></label>
+      <label class="opt"><input type="checkbox" class="analise" value="Séries temporais"><span>Séries temporais</span></label>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="field">
+      <label class="q" for="ineditismo">Literatura disponível sobre o recorte</label>
+      <select id="ineditismo">
+        <option value="1.00" data-lbl="literatura farta">Farta — tema consolidado</option>
+        <option value="1.03" data-lbl="literatura moderada" selected>Moderada — há trabalhos, mas dispersos</option>
+        <option value="1.08" data-lbl="literatura escassa">Escassa — tema emergente</option>
+      </select>
+    </div>
+    <div class="field">
+      <label class="q" for="interdisc">A pesquisa cruza mais de uma área?</label>
+      <select id="interdisc">
+        <option value="1.00" data-lbl="área única">Não, é de uma área só</option>
+        <option value="1.04" data-lbl="interdisciplinar" selected>Sim, é interdisciplinar</option>
+      </select>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BLOCO 05 ============ -->
+<section class="bloco">
+  <div class="bloco-head"><span class="num">05</span><h2>Busca de referências</h2></div>
+  <p class="bloco-sub">Montar strings booleanas, cobrir bases e triar resultados é trabalho medido em horas.</p>
+
+  <div class="field">
+    <label class="q">Tipo de revisão prevista <span class="req">*</span></label>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="revisao" value="Narrativa" data-m="1.00"><span>Narrativa<small>Seleção por leitura e pertinência, sem protocolo formal</small></span></label>
+      <label class="opt"><input type="radio" name="revisao" value="Integrativa" data-m="1.06" checked><span>Integrativa<small>Critérios explícitos, sem reprodutibilidade total</small></span></label>
+      <label class="opt"><input type="radio" name="revisao" value="Mapeamento sistemático" data-m="1.18"><span>Mapeamento sistemático<small>Classificação do campo por questões de mapeamento</small></span></label>
+      <label class="opt"><input type="radio" name="revisao" value="Revisão sistemática PRISMA" data-m="1.20"><span>Revisão sistemática (PRISMA)<small>Protocolo, fluxograma, critérios de inclusão e exclusão</small></span></label>
+      <label class="opt"><input type="radio" name="revisao" value="Bibliométrica" data-m="1.16"><span>Bibliométrica<small>Coocorrência, mapas de rede, análise de citações</small></span></label>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="field">
+      <label class="q" for="bases">Bases a cobrir<span class="hint">Scopus, Web of Science, IEEE Xplore, Scielo, PubMed…</span></label>
+      <select id="bases">
+        <option value="1.00" data-lbl="1 a 2 bases">1 a 2 bases</option>
+        <option value="1.03" data-lbl="3 a 5 bases" selected>3 a 5 bases</option>
+        <option value="1.06" data-lbl="6 ou mais bases">6 ou mais bases</option>
+      </select>
+    </div>
+    <div class="field">
+      <label class="q" for="triagem">Volume estimado de triagem</label>
+      <select id="triagem">
+        <option value="1.00" data-lbl="até 100 registros">Até 100 registros</option>
+        <option value="1.03" data-lbl="100 a 500 registros" selected>100 a 500 registros</option>
+        <option value="1.07" data-lbl="500 a 2.000 registros">500 a 2.000 registros</option>
+        <option value="1.12" data-lbl="mais de 2.000 registros">Mais de 2.000 registros</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="field">
+      <label class="q" for="idiomafontes">Idioma das fontes</label>
+      <select id="idiomafontes">
+        <option value="1.00" data-lbl="fontes em português">Só português</option>
+        <option value="1.02" data-lbl="fontes em português e inglês" selected>Português e inglês</option>
+        <option value="1.05" data-lbl="fontes multilíngues">Multilíngue</option>
+      </select>
+    </div>
+    <div class="field">
+      <label class="q" for="strings">Precisa de apoio para montar as strings de busca?</label>
+      <select id="strings">
+        <option value="1.00" data-lbl="strings já definidas">Não, já domino</option>
+        <option value="1.04" data-lbl="apoio nas strings de busca" selected>Sim, desde o zero</option>
+      </select>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BLOCO 06 ============ -->
+<section class="bloco">
+  <div class="bloco-head"><span class="num">06</span><h2>Serviços adicionais</h2></div>
+  <p class="bloco-sub">Opcionais, cobrados à parte. Marque o que quiser incluir — os valores entram no orçamento que eu te envio.</p>
+
+  <div class="field">
+    <div class="opts">
+      <label class="opt"><input type="checkbox" class="extra" data-price="388" data-hora="1" value="Configuração e treinamento de ferramentas"><span>Configuração e treinamento de ferramentas<small>Zotero, Mendeley, Rayyan, Connected Papers, Overleaf — cobrado por hora</small></span></label>
+      <div class="field hidden" id="campoHoras" style="margin:0 0 0 8px">
+        <label class="q" for="horasFerr">Quantas horas de treinamento</label>
+        <select id="horasFerr">
+          <option value="1">1 hora</option>
+          <option value="2" selected>2 horas</option>
+          <option value="3">3 horas</option>
+          <option value="4">4 horas</option>
+          <option value="6">6 horas</option>
+          <option value="0">A definir na conversa</option>
+        </select>
+      </div>
+      <label class="opt"><input type="checkbox" class="extra" data-price="780" value="Apoio em análise de dados"><span>Apoio em análise de dados<small>Roteiro em R, Python, SPSS ou NVivo — conduzido por você</small></span></label>
+      <label class="opt"><input type="checkbox" class="extra" data-price="230" value="Simulação de banca"><span>Simulação de banca<small>Arguição simulada e relatório com perguntas prováveis</small></span></label>
+      <label class="opt"><input type="checkbox" class="extra" data-price="290" value="Roteiro e estrutura dos slides"><span>Roteiro e estrutura dos slides<small>Narrativa da apresentação; você monta o material</small></span></label>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BLOCO 07 ============ -->
+<section class="bloco">
+  <div class="bloco-head"><span class="num">07</span><h2>Prazo</h2></div>
+  <p class="bloco-sub" id="subPrazo">Informe quando você precisa do trabalho pronto.</p>
+
+  <div class="grid2">
+    <div class="field"><label class="q" for="dataentrega">Data desejada de entrega do serviço <span class="req">*</span><span class="hint">Quando você precisa ter o documento em mãos.</span></label><input type="date" id="dataentrega"></div>
+    <div class="field"><label class="q" for="databanca">Data da banca ou do prazo institucional<span class="hint">Se já estiver marcada.</span></label><input type="date" id="databanca"></div>
+  </div>
+
+  <div id="avisoPrazo"></div>
+
+  <div class="field" style="margin-top:22px">
+    <label class="q" for="obs">Algo que eu precise saber antes de fechar o orçamento</label>
+    <textarea id="obs" placeholder="Reprovação anterior, mudança de orientador, exigência específica da banca, restrição de orçamento, prazo institucional improrrogável…"></textarea>
+  </div>
+</section>
+
+<!-- ============ ENVIO ============ -->
+<div class="card" id="cardEnvio">
+  <h3>Enviar o briefing</h3>
+  <p class="intro">Suas respostas vão direto para mim. Eu calculo o valor exato e retorno em até 1 dia útil.</p>
+  <div class="grid2">
+    <div class="field" style="margin-bottom:0"><label class="q" for="envNome">Confirme seu nome <span class="req">*</span></label><input type="text" id="envNome" placeholder="Preenche sozinho a partir do bloco 01"></div>
+    <div class="field" style="margin-bottom:0"><label class="q" for="envEmail">Confirme seu e-mail <span class="req">*</span></label><input type="email" id="envEmail" placeholder="para eu responder"></div>
+  </div>
+  <div class="btn-row">
+    <button class="btn solid" id="btnEnviar">Enviar briefing</button>
+    <button class="btn" id="btnRevisar">Revisar minhas respostas</button>
+  </div>
+  <div id="statusEnvio"></div>
+</div>
+
+<div class="card hidden" id="cardResumo">
+  <h3>Suas respostas</h3>
+  <textarea class="saida" id="saida" readonly></textarea>
+  <div class="btn-row"><button class="btn" id="btnCopiar">Copiar</button></div>
+</div>
+
+<footer class="fim">
+  Dúvidas antes de preencher, entre em contato pelo <b>(73) 98117-8186</b>.
+</footer>
+
+</div><!-- /wrap -->
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------------------------------------------------------------
+  // TABELA DE PREÇOS — alterar aqui muda todo o formulário
+  // ---------------------------------------------------------------
+  var BASES = {
+    qualifDout:   {pct:0.37, ancora:"tese", pag:70, dias:60, ancorado:true,
+                   nome:"Exame de qualificação de doutorado", grupo:"37% da Tese de Doutorado",
+                   desc:"Documento defendido na banca de qualificação do doutorado — na prática, a primeira metade da tese. O valor é ancorado na tese completa: no máximo 37% dela no caso básico, até 70 páginas e entrega em 60 a 90 dias. Páginas extras e prazo menor entram acima disso."},
+    qualifMest:   {pct:0.37, ancora:"dissertacao", pag:50, dias:60, ancorado:true,
+                   nome:"Exame de qualificação de mestrado", grupo:"37% da Dissertação de Mestrado",
+                   desc:"Documento defendido na banca de qualificação do mestrado — na prática, a primeira metade da dissertação. O valor é ancorado na dissertação completa: no máximo 37% dela no caso básico, até 50 páginas e entrega em 60 a 90 dias. Páginas extras e prazo menor entram acima disso."},
+    propostaDout: {price:2997.90,  pag:30,  dias:30,  sens:1.00,
+                   nome:"Projeto de proposta de doutorado", grupo:"Projeto / Anteprojeto",
+                   desc:"Documento elaborado nos primeiros meses após o ingresso no doutorado, quando o programa exige a proposta no lugar do pré-projeto."},
+    preprojeto:   {price:2997.90,  pag:30,  dias:30,  sens:1.00,
+                   nome:"Projeto / pré-projeto para candidatura", grupo:"Projeto / Anteprojeto",
+                   desc:"Pré-projeto apresentado na candidatura, avaliado via edital de seleção."},
+    artigo:       {price:1496.90,  pag:20,  dias:20,  sens:1.00, nome:"Artigo científico", grupo:"Artigo Científico", desc:""},
+    artigoQualis: {price:1947.90,  pag:20,  dias:20,  sens:0.90, nome:"Artigo Qualis (A1, A2 etc.)", grupo:"Artigo Qualis (A1, A2 etc)", desc:""},
+    tccGrad:      {price:3497.90,  pag:40,  dias:30,  sens:1.00, nome:"TCC de graduação", grupo:"TCC Graduação", desc:""},
+    tccPos:       {price:3997.90,  pag:30,  dias:30,  sens:0.90, nome:"TCC de pós-graduação", grupo:"TCC Pós-Graduação", desc:""},
+    mba:          {price:3997.90,  pag:30,  dias:30,  sens:0.90, nome:"MBA", grupo:"MBA", desc:""},
+    dissertacao:  {price:8990.90,  pag:70,  dias:120, sens:0.60, nome:"Dissertação de mestrado", grupo:"Dissertação de Mestrado", desc:""},
+    tese:         {price:13990.90, pag:180, dias:150, sens:0.45, nome:"Tese de doutorado", grupo:"Tese de Doutorado", desc:""}
+  };
+  // O exame de qualificação não tem linha própria na tabela: o valor sai da tese
+  // ou da dissertação completa. O teto de 37% é o topo da faixa do caso básico.
+  ["qualifDout","qualifMest"].forEach(function(k){
+    BASES[k].price = Math.round(BASES[BASES[k].ancora].price * BASES[k].pct * 100) / 100;
+    BASES[k].refNome = BASES[BASES[k].ancora].nome;
+  });
+  var PISO_ANCORA = 0.75;   // caso mais simples = 75% do teto de 37%
+
+  var ORDEM = ["qualifDout","qualifMest","propostaDout","preprojeto","artigo","artigoQualis","tccGrad","tccPos","mba","dissertacao","tese"];
+
+  // Tabela de Investimento — exatamente as linhas definidas, na ordem da tabela
+  var TABELA = [
+    {n:"Artigo Científico",           d:"20 páginas · 20 dias",       p:1496.90},
+    {n:"Artigo Qualis (A1, A2 etc)",  d:"20 páginas · 20 dias",       p:1947.90},
+    {n:"TCC Graduação",               d:"40 páginas · 30 dias",       p:3497.90},
+    {n:"TCC Pós-Graduação",           d:"25/30 páginas · 30 dias",    p:3997.90},
+    {n:"MBA",                         d:"25/30 páginas · 30 dias",    p:3997.90},
+    {n:"Dissertação de Mestrado",     d:"70 páginas · 120 dias",      p:8990.90},
+    {n:"Tese de Doutorado",           d:"180 páginas · 120-180 dias", p:13990.90},
+    {n:"Projeto / Anteprojeto",       d:"Avaliação via edital",       p:2997.90}
+  ];
+  var POR_PAGINA   = 15.00;
+  var URG_POR_DIA  = 0.005;
+  var EMAIL_CONSULTOR = "csborges.procimmm@uesc.br";
+
+  var $ = function(id){ return document.getElementById(id); };
+  var brl = function(v){ return "R$ " + v.toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2}); };
+  var checkedRadio = function(n){ return document.querySelector('input[name="'+n+'"]:checked'); };
+  var sel = function(id){ var e=$(id); return e.options[e.selectedIndex]; };
+  var irPara = function(el){ if(el && el.scrollIntoView) el.scrollIntoView({behavior:"smooth",block:"start"}); };
+
+  // ---------------------------------------------------------------
+  // Montagem da tabela de valores base e do seletor de tipo
+  // ---------------------------------------------------------------
+  (function montar(){
+    var li = "";
+    TABELA.forEach(function(t){
+      li += '<li><span class="n">'+t.n+'<small>'+t.d+'</small></span><span class="p">'+brl(t.p)+'</span></li>';
+    });
+    $("listaPrecos").innerHTML = li;
+
+    var sl = "";
+    ORDEM.forEach(function(k){ sl += '<option value="'+k+'">'+BASES[k].nome+'</option>'; });
+    $("tipo").innerHTML = sl;
+  })();
+
+  // ---------------------------------------------------------------
+  // Cálculo — invisível para o cliente, vai só no e-mail
+  // ---------------------------------------------------------------
+  function calcular(){
+    var f = [], comp = [];
+    var B = BASES[$("tipo").value];
+
+    var peso = 0, secoes = [];
+    document.querySelectorAll(".sec").forEach(function(c){
+      if(c.checked){ peso += parseFloat(c.dataset.w); secoes.push(c.value); }
+    });
+    peso = Math.round(peso*1000)/1000;
+    var parcial = peso < 0.999;
+
+    comp.push({lbl: B.ancorado
+      ? "Teto do caso básico — 37% da " + B.refNome
+      : "Valor base — " + B.grupo, val:B.price, base:true});
+    var v = B.price * peso;
+    if(parcial) comp.push({lbl:"Escopo parcial — "+secoes.length+" de 12 seções ("+Math.round(peso*100)+"%)", val:v - B.price});
+
+    // páginas: sem acréscimo até a referência, depois R$ 15,00 por página
+    var pag = Math.max(5, parseInt($("paginas").value||B.pag,10));
+    var pagExtra = Math.max(0, pag - B.pag);
+    var addPag = pagExtra * POR_PAGINA;
+
+    // complexidade somada
+    var soma = 0;
+    function add(rot, m){
+      var pc = m - 1; soma += pc;
+      if(Math.abs(pc) > 0.001) f.push([rot, (pc>0?"+":"−")+Math.round(Math.abs(pc)*100)+"%"]);
+    }
+    var est = checkedRadio("estagio"); add("Estágio da pesquisa", parseFloat(est.dataset.m));
+    var met = checkedRadio("metodo");  add("Método — "+met.value, parseFloat(met.dataset.m));
+    var rev = checkedRadio("revisao"); add("Revisão "+rev.value.toLowerCase(), parseFloat(rev.dataset.m));
+
+    var rotulos = {};
+    ["escrito","refs","dados","etica","ineditismo","interdisc","bases","triagem","idiomafontes","strings"].forEach(function(id){
+      var o = sel(id);
+      rotulos[id] = o.dataset.lbl || o.textContent.trim();
+      add(o.dataset.lbl || id, parseFloat(o.value));
+    });
+    var idi = $("idioma").value;
+    add("Idioma do documento", idi==="en"?1.15: idi==="es"?1.10: idi==="bi"?1.08 : 1.00);
+    add("LaTeX / Overleaf", $("editor").value==="latex" ? 1.04 : 1.00);
+
+    var somaCrua = soma;
+    soma = Math.max(-0.20, Math.min(soma, 0.80));
+    if(somaCrua > 0.80) f.push(["Teto de acréscimo", "+80%"]);
+
+    var fatorComplex;
+    if(B.ancorado){
+      // A base JÁ é o teto de 37%. A complexidade só posiciona o caso dentro da
+      // faixa: o mais pesado encosta no teto, o mais simples cai para 75% dele.
+      fatorComplex = PISO_ANCORA + (1 - PISO_ANCORA) * ((soma + 0.20) / 1.00);
+      fatorComplex = Math.min(1, Math.max(PISO_ANCORA, fatorComplex));
+      f.push(["Posição na faixa do teto", Math.round(fatorComplex*100) + "% de " + brl(B.price)]);
+    } else {
+      if(B.sens !== 1){ f.push(["Sensibilidade — "+B.grupo, "×"+B.sens.toFixed(2)]); soma = soma * B.sens; }
+      fatorComplex = 1 + soma;
+    }
+
+    var vAntes = v;
+    v = v * fatorComplex;
+    if(Math.abs(fatorComplex-1) > 0.001){
+      comp.push({lbl: B.ancorado
+        ? "Complexidade da pesquisa — " + Math.round(fatorComplex*100) + "% do teto"
+        : "Complexidade da pesquisa — " + (soma>0?"+":"−") + Math.round(Math.abs(soma)*100) + "%",
+        val: v - vAntes});
+    }
+
+    // piso: nunca abaixo do mínimo da faixa, proporcional ao escopo
+    var piso = B.price * (B.ancorado ? PISO_ANCORA : 1) * peso, pisoAplicado = false;
+    if(v < piso){
+      v = piso; pisoAplicado = true;
+      comp = comp.filter(function(c){ return c.base || c.lbl.indexOf("Escopo parcial") === 0; });
+      if(B.ancorado) comp.push({lbl:"Piso da faixa — " + Math.round(PISO_ANCORA*100) + "% do teto", val:piso - B.price * peso});
+      f.push(["Piso aplicado", brl(piso)]);
+    }
+
+    // O teto de 37% já é a própria base nos tipos ancorados: fecha o caso básico.
+    // Páginas extras e antecipação entram depois e sobem sem limite.
+    var tetoAplicado = B.ancorado && Math.abs(v - B.price * peso) < 0.01;
+
+    // páginas acima da referência — fora do teto
+    if(addPag > 0){
+      comp.push({lbl:"Páginas acima da referência — "+pagExtra+" × "+brl(POR_PAGINA), val:addPag});
+      v += addPag;
+    }
+
+    var servico = v;
+
+    // urgência: 0,5% por dia abaixo do prazo de referência
+    var hoje = new Date(); hoje.setHours(0,0,0,0);
+    var dEnt = $("dataentrega").value ? new Date($("dataentrega").value+"T00:00:00") : null;
+    var dBanca = $("databanca").value ? new Date($("databanca").value+"T00:00:00") : null;
+    var diasDisp = dEnt ? Math.round((dEnt - hoje)/86400000) : null;
+    var diasFalta = 0, addUrg = 0;
+    if(diasDisp !== null && diasDisp < B.dias){
+      diasFalta = B.dias - Math.max(0, diasDisp);
+      addUrg = servico * URG_POR_DIA * diasFalta;
+      comp.push({lbl:"Antecipação — "+diasFalta+" dias abaixo dos "+B.dias+" (0,5% ao dia)", val:addUrg});
+      f.push(["Urgência", "+"+(diasFalta*0.5).toFixed(1)+"%"]);
+    }
+    var totalServico = servico + addUrg;
+
+    // adicionais
+    var extras = 0, listaExtras = [];
+    document.querySelectorAll(".extra").forEach(function(c){
+      if(!c.checked) return;
+      if(c.dataset.hora){
+        var h = parseInt($("horasFerr").value,10);
+        if(h > 0){ extras += h * 388; listaExtras.push([c.value+" — "+h+" h", h*388]); }
+        else { listaExtras.push([c.value+" — horas a definir", 0]); }
+      } else {
+        extras += parseFloat(c.dataset.price);
+        listaExtras.push([c.value, parseFloat(c.dataset.price)]);
+      }
+    });
+
+    return {
+      B:B, peso:peso, parcial:parcial, secoes:secoes, pag:pag, pagExtra:pagExtra, comp:comp, fatores:f,
+      servico:servico, addUrg:addUrg, diasFalta:diasFalta, diasDisp:diasDisp, dEnt:dEnt, dBanca:dBanca,
+      totalServico:totalServico, extras:extras, listaExtras:listaExtras, total:totalServico + extras,
+      pisoAplicado:pisoAplicado, tetoAplicado:tetoAplicado, rotulos:rotulos,
+      metodo:met.value, revisao:rev.value, estagio:textoRadio("estagio")
+    };
+  }
+
+  function textoRadio(n){
+    var r = checkedRadio(n);
+    return r ? r.parentNode.querySelector("span").childNodes[0].textContent.trim() : "—";
+  }
+
+  // ---------------------------------------------------------------
+  // Tela do cliente — só referências, nunca o valor calculado
+  // ---------------------------------------------------------------
+  function render(){
+    var B = BASES[$("tipo").value];
+    $("trNome").textContent = B.grupo + (B.ancorado ? " · máximo no caso básico" : "");
+    $("trPag").textContent  = "até " + B.pag + " páginas";
+    $("trDias").textContent = B.dias + (B.dias === 60 ? " a 90 dias" : " dias");
+    $("descTipo").textContent = B.desc;
+    $("descTipo").classList.toggle("hidden", !B.desc);
+    $("hintPag").textContent = "Sem acréscimo até " + B.pag + " páginas. Acima disso, " + brl(POR_PAGINA) + " por página adicional.";
+    $("subPrazo").textContent = "O prazo de entrega para " + B.grupo.toLowerCase() + " é de " +
+      B.dias + (B.dias === 60 ? " a 90 dias" : " dias") + ". Se precisar de menos tempo, há acréscimo de 0,5% por dia antecipado.";
+
+    $("campoNivelOutro").classList.toggle("hidden", !$("nivelOutro").checked);
+    $("campoHoras").classList.toggle("hidden", !document.querySelector('.extra[data-hora]').checked);
+
+    var d = calcular();
+    var av = "";
+    if(d.diasFalta > 0){
+      av = '<div class="nota"><b>Você pediu ' + d.diasFalta + ' dias a menos que o prazo padrão.</b> É viável, com acréscimo por antecipação — o valor entra no orçamento que eu te envio.</div>';
+    } else if(d.diasDisp !== null && d.diasDisp < 0){
+      av = '<div class="alerta"><b>A data informada já passou.</b> Confira o campo de entrega.</div>';
+    } else if(d.diasDisp !== null){
+      av = '<div class="nota ok">Prazo dentro do padrão para este tipo de trabalho.</div>';
+    }
+    $("avisoPrazo").innerHTML = av;
+    return d;
+  }
+
+  // ---------------------------------------------------------------
+  // Resumo sem valores (cliente) e com valores (consultor)
+  // ---------------------------------------------------------------
+  function marcados(cls){
+    var out = [];
+    document.querySelectorAll("."+cls).forEach(function(c){ if(c.checked) out.push(c.value); });
+    return out.length ? out.join("; ") : "nenhuma";
+  }
+  function nivel(){
+    var r = checkedRadio("nivel");
+    if(!r) return "—";
+    return r.value === "Outro" ? "Outro — " + ($("nivelOutroTxt").value.trim() || "não especificado") : r.value;
+  }
+  function val(id){ return $(id).value.trim() || "—"; }
+
+  function respostas(d){
+    var L = [];
+    L.push("[01] IDENTIFICAÇÃO");
+    L.push("Nome: " + ($("envNome").value.trim() || val("nome")));
+    L.push("Contato: " + ($("envEmail").value.trim() || val("email")) + " · " + val("zap"));
+    L.push("Programa: " + val("uni"));
+    L.push("Linha: " + val("linha"));
+    L.push("Nível: " + nivel());
+    L.push("Orientador: " + val("orientador") + " — " + $("cienciaOri").value);
+    L.push("");
+    L.push("[02] DOCUMENTO");
+    L.push("Tipo: " + d.B.nome);
+    L.push("Páginas exigidas: " + d.pag + (d.pagExtra > 0 ? " (" + d.pagExtra + " acima da referência de " + d.B.pag + ")" : " (dentro da referência de " + d.B.pag + ")"));
+    L.push("Norma: " + $("norma").value);
+    L.push("Idioma: " + sel("idioma").textContent + " · Editor: " + sel("editor").textContent);
+    L.push("Escopo: " + Math.round(d.peso*100) + "% — " + d.secoes.join("; "));
+    L.push("Modelo do programa: " + val("modelo"));
+    L.push("");
+    L.push("[03] ESTÁGIO DA PESQUISA");
+    L.push("Tema: " + d.estagio);
+    L.push("Escrito: " + d.rotulos.escrito + " · Referências: " + d.rotulos.refs);
+    L.push("Dados: " + d.rotulos.dados + " · Ética: " + d.rotulos.etica);
+    L.push("Gestor de referências: " + $("gestor").value);
+    L.push("");
+    L.push("[04] MÉTODO");
+    L.push("Natureza: " + d.metodo);
+    L.push("Análises: " + marcados("analise"));
+    L.push("Literatura: " + d.rotulos.ineditismo + " · " + d.rotulos.interdisc);
+    L.push("");
+    L.push("[05] BUSCA DE REFERÊNCIAS");
+    L.push("Revisão: " + d.revisao + " · " + d.rotulos.bases + " · " + d.rotulos.triagem);
+    L.push("Fontes: " + d.rotulos.idiomafontes + " · " + d.rotulos.strings);
+    L.push("");
+    L.push("[06] SERVIÇOS ADICIONAIS");
+    L.push(d.listaExtras.length ? d.listaExtras.map(function(e){ return e[0]; }).join("; ") : "nenhum");
+    L.push("");
+    L.push("[07] PRAZO");
+    L.push("Entrega desejada: " + (d.dEnt ? d.dEnt.toLocaleDateString("pt-BR") : "—") +
+           (d.diasDisp !== null ? " (" + d.diasDisp + " dias a partir de hoje)" : ""));
+    L.push("Banca / prazo institucional: " + (d.dBanca ? d.dBanca.toLocaleDateString("pt-BR") : "—"));
+    L.push("Prazo padrão do tipo: " + d.B.dias + " dias" + (d.diasFalta > 0 ? " — antecipação de " + d.diasFalta + " dias" : ""));
+    L.push("Observações: " + val("obs"));
+    return L.join("\n");
+  }
+
+  function orcamento(d){
+    var L = [];
+    var pad = function(t){ t = t.length > 44 ? t.slice(0,43)+"…" : t; return (t+" ").padEnd(46,".")+" "; };
+    L.push("========== ORÇAMENTO (visível só para o consultor) ==========");
+    d.comp.forEach(function(c){
+      L.push(pad(c.lbl) + (c.base ? brl(c.val) : (c.val >= 0 ? "+ " : "− ") + brl(Math.abs(c.val))));
+    });
+    L.push(pad("VALOR DO SERVIÇO") + brl(d.totalServico));
+    if(d.listaExtras.length){
+      L.push("");
+      L.push("Adicionais:");
+      d.listaExtras.forEach(function(e){ L.push(pad("  " + e[0]) + (e[1] ? brl(e[1]) : "a definir")); });
+    }
+    L.push("");
+    L.push(pad("TOTAL") + brl(d.total));
+    if(d.pisoAplicado) L.push("! Piso da tabela aplicado — ajustes puxariam abaixo da base.");
+    if(d.tetoAplicado) L.push("! Caso básico no teto de 37% — " + brl(d.B.price) + " (" + d.B.pag + " páginas, " + d.B.dias + " a 90 dias). Páginas extras e antecipação entram por cima.");
+    L.push("");
+    L.push("Memória de cálculo:");
+    d.fatores.forEach(function(x){ L.push("  " + pad(x[0]) + x[1]); });
+    L.push("");
+    L.push("Margem sugerida de negociação: até 10% sobre o total.");
+    return L.join("\n");
+  }
+
+  // ---------------------------------------------------------------
+  // Envio
+  // ---------------------------------------------------------------
+  function validar(){
+    var faltas = [];
+    var nome  = $("envNome").value.trim() || $("nome").value.trim();
+    var email = $("envEmail").value.trim() || $("email").value.trim();
+    if(!nome) faltas.push("nome");
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) faltas.push("e-mail válido");
+    if(!$("dataentrega").value) faltas.push("data desejada de entrega");
+    if($("nivelOutro").checked && !$("nivelOutroTxt").value.trim()) faltas.push("qual é o seu nível");
+    $("envNome").classList.toggle("erro", !nome);
+    $("envEmail").classList.toggle("erro", faltas.indexOf("e-mail válido") > -1);
+    return {ok:faltas.length === 0, faltas:faltas, nome:nome, email:email};
+  }
+  function status(tipo, html){ $("statusEnvio").innerHTML = '<div class="'+tipo+'">'+html+'</div>'; }
+
+  $("btnEnviar").addEventListener("click", function(){
+    var v = validar();
+    if(!v.ok){ status("alerta", "Falta preencher: <b>"+v.faltas.join(", ")+"</b>."); return; }
+    var d = render(), btn = this;
+    btn.disabled = true; btn.textContent = "Enviando…";
+    fetch("https://formsubmit.co/ajax/" + EMAIL_CONSULTOR, {
+      method:"POST",
+      headers:{"Content-Type":"application/json","Accept":"application/json"},
+      body: JSON.stringify({
+        _subject: "Briefing — " + v.nome + " · " + d.B.nome + " · " + brl(d.total),
+        _replyto: v.email,
+        _captcha: "false",
+        "1_Cliente": v.nome + " · " + v.email + " · " + val("zap"),
+        "2_Trabalho": d.B.nome + " · " + d.pag + " páginas · escopo " + Math.round(d.peso*100) + "%",
+        "3_Prazo": (d.dEnt ? d.dEnt.toLocaleDateString("pt-BR") : "—") + (d.diasFalta > 0 ? " — ANTECIPAÇÃO de " + d.diasFalta + " dias" : " — dentro do padrão"),
+        "4_TOTAL": brl(d.total),
+        "5_Respostas": respostas(d),
+        "6_Orcamento": orcamento(d)
+      })
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(){
+      status("nota ok", "<b>Briefing enviado.</b> Retorno em até 1 dia útil no e-mail " + v.email + ".");
+      btn.textContent = "Enviado";
+    })
+    .catch(function(){
+      status("alerta", "<b>O envio falhou.</b> Clique em <i>Revisar minhas respostas</i>, copie o texto e mande pelo WhatsApp (73) 98117-8186.");
+      btn.disabled = false; btn.textContent = "Tentar de novo";
+    });
+  });
+
+  $("btnRevisar").addEventListener("click", function(){
+    var d = render();
+    $("cardResumo").classList.remove("hidden");
+    $("saida").value = respostas(d);
+    irPara($("cardResumo"));
+  });
+
+  $("btnCopiar").addEventListener("click", function(){
+    var t = $("saida"), b = this;
+    t.removeAttribute("readonly"); t.select(); t.setSelectionRange(0,999999);
+    try{ document.execCommand("copy"); b.textContent = "Copiado"; }catch(e){ b.textContent = "Selecione e copie"; }
+    t.setAttribute("readonly","readonly");
+    setTimeout(function(){ b.textContent = "Copiar"; }, 2200);
+  });
+
+  ["nome","email"].forEach(function(id){
+    $(id).addEventListener("input", function(){
+      var alvo = id === "nome" ? $("envNome") : $("envEmail");
+      if(!alvo.dataset.tocado) alvo.value = this.value;
+    });
+  });
+  ["envNome","envEmail"].forEach(function(id){
+    $(id).addEventListener("input", function(){ this.dataset.tocado = "1"; });
+  });
+
+  // ao trocar o tipo, sugere o número de páginas de referência
+  $("tipo").addEventListener("change", function(){
+    $("paginas").value = BASES[this.value].pag;
+    render();
+  });
+
+  document.addEventListener("input", render);
+  document.addEventListener("change", render);
+
+  $("dataentrega").value = new Date(Date.now() + 75*86400000).toISOString().slice(0,10);
+  render();
+})();
+</script>
+</body>
+</html>
