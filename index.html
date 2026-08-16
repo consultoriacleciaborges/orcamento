@@ -141,8 +141,6 @@ input.erro,select.erro{border-color:var(--alert)}
 .btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
 
 
-.saida{width:100%;background:#07152A;border:1px solid var(--line);border-radius:4px;color:var(--chalk);
-  font-family:var(--mono);font-size:12px;line-height:1.65;padding:14px;min-height:240px;white-space:pre;overflow:auto}
 footer.fim{padding:28px 0 10px;color:var(--dim);font-size:13px;line-height:1.7;border-top:1px solid var(--line);margin-top:10px}
 footer.fim a{color:var(--orange);text-decoration:none;font-weight:600}
 footer.fim a:hover{text-decoration:underline}
@@ -618,17 +616,12 @@ footer.fim a:hover{text-decoration:underline}
   </div>
   <div class="btn-row">
     <button class="btn solid" id="btnEnviar">Enviar briefing</button>
-    <button class="btn" id="btnRevisar">Revisar minhas respostas</button>
   </div>
   <div id="statusEnvio"></div>
 </div>
 
-<div class="card hidden" id="cardResumo">
-  <h3>Suas respostas</h3>
-  <textarea class="saida" id="saida" readonly></textarea>
-  <div class="btn-row"><button class="btn" id="btnCopiar">Copiar</button></div>
 </div>
-
+ 
 <footer class="fim">
   Dúvidas antes de preencher, chame no WhatsApp: <a href="https://wa.me/message/B7TDUNVHQY7IP1" target="_blank" rel="noopener">(73) 98117-8186</a>
 </footer>
@@ -1357,22 +1350,6 @@ footer.fim a:hover{text-decoration:underline}
       status("alerta", "<b>O envio falhou.</b> Clique em <i>Revisar minhas respostas</i>, copie o texto e mande pelo WhatsApp: <a href=\"" + WHATSAPP + "\" target=\"_blank\" style=\"color:var(--orange)\">(73) 98117-8186</a>.");
       btn.disabled = false; btn.textContent = "Tentar de novo";
     });
-  });
-
-  $("btnRevisar").addEventListener("click", function(){
-    var d = render();
-    if(d.vazio){ status("alerta", "Escolha o tipo de entrega primeiro."); return; }
-    $("cardResumo").classList.remove("hidden");
-    $("saida").value = respostas(d) + "\n\n" + orcamento(d).split("Memoria de calculo:")[0].trim();
-    irPara($("cardResumo"));
-  });
-
-  $("btnCopiar").addEventListener("click", function(){
-    var t = $("saida"), b = this;
-    t.removeAttribute("readonly"); t.select(); t.setSelectionRange(0,999999);
-    try{ document.execCommand("copy"); b.textContent = "Copiado"; }catch(e){ b.textContent = "Selecione e copie"; }
-    t.setAttribute("readonly","readonly");
-    setTimeout(function(){ b.textContent = "Copiar"; }, 2200);
   });
 
   $("btnTodas").addEventListener("click", function(){
